@@ -89,7 +89,6 @@ async function watchVideo(page) {
     await scrollPageToTop(page, scrollOptions);
     console.log("Scrolled to top");
     await delay(4000);
-
     const playWatch = await page.$$(playButtonSelector);
     playWatch[0].click();
     console.log("Clicked playButton");
@@ -128,7 +127,7 @@ async function watchVideo(page) {
 
 //đăng nhâp
 const login = async (page, email, password) => {
-  await page.goto("https://m.facebook.com/");
+  await page.goto("https://facebook.com/");
   await page.waitForSelector('input[id="email"]');
 
   await page.type('input[id="email"]', email);
@@ -136,14 +135,19 @@ const login = async (page, email, password) => {
   await page.keyboard.press("Enter");
 
   await delay(9000);
-  if (false) {
-    await page.click(`form[method][action] > ._2pis > button[type]`);
-  } else {
-    await page.goto("https://m.facebook.com/");
-  }
 
   console.log("Đăng nhập thành công");
   return true;
+};
+
+// Hàm kiểm tra trang đã đăng nhập
+const isLogged = async (page) => {
+  try {
+    await page.waitForSelector(`[name= "login" ]`, { timeout: 5000 });
+    return false; // Chưa đăng nhập
+  } catch (error) {
+    return true; // Đã đăng nhập
+  }
 };
 (async () => {
   let br = null;
@@ -170,19 +174,19 @@ const login = async (page, email, password) => {
     assert(browser);
     br = browser;
     const page = await browser.newPage();
-    if (false) {
-      const loginSuccess = await login(
-        page,
-        "vunguyet13122k1@gmail.com",
-        "glucozo2k1@"
-      );
-      if (!loginSuccess) {
-        console.log("Đăng nhập thất bại");
-        await browser.close();
-        return;
-      }
-    } else {
-      await page.goto("https://facebook.com/");
+    // Mở trang web
+    await page.goto("https://facebook.com/");
+    await page.waitForTimeout(5000);
+
+    // Kiểm tra trang đã đăng nhập
+    const isAlreadyLogged = await isLogged(page);
+    console.log("Kiểm tra trang đăng nhập");
+    // Nếu chưa đăng nhập thì gọi hàm login
+    if (!isAlreadyLogged) {
+      console.log("Trang chưa đn");
+      await delay(2000);
+      await login(page, "gmail", "passs@");
+      console.log("đã đn thành công");
     }
 
     // xem video
@@ -206,59 +210,59 @@ const login = async (page, email, password) => {
     await delay(2000);
     await viewStr(page);
     await delay(2000);
-    //cmt
-    const childCmt = await page.$$(lableChild);
-    if (childCmt.length > 1) {
-      await clickAndProcess(childCmt[1]);
+    // //cmt
+    // const childCmt = await page.$$(lableChild);
+    // if (childCmt.length > 1) {
+    //   await clickAndProcess(childCmt[1]);
 
-      const typeCm = `[role="presentation"] > div >div > [data-visualcompletion="ignore"]`;
-      await delay(2000);
-      console.log("1");
-      await page.waitForSelector(typeCm);
-      await delay(2000);
-      console.log("2");
+    //   const typeCm = `[role="presentation"] > div >div > [data-visualcompletion="ignore"]`;
+    //   await delay(2000);
+    //   console.log("1");
+    //   await page.waitForSelector(typeCm);
+    //   await delay(2000);
+    //   console.log("2");
 
-      const typeCmtE = await page.$$(typeCm);
-      await delay(2000);
-      console.log("3");
+    //   const typeCmtE = await page.$$(typeCm);
+    //   await delay(2000);
+    //   console.log("3");
 
-      typeCmtE[0].click();
-      console.log("đã click cmt");
-      await page.type(typeCm, " :>");
-      await page.waitForTimeout(3000);
-      console.log("đã nhập cmt");
+    //   typeCmtE[0].click();
+    //   console.log("đã click cmt");
+    //   await page.type(typeCm, " :>");
+    //   await page.waitForTimeout(3000);
+    //   console.log("đã nhập cmt");
 
-      await page.keyboard.press("Enter");
-      await delay(9000);
-      //đóng cmt
-      const closeCmt = `div[aria-labelledby][role="dialog"] > div > [aria-hidden] > div> [aria-hidden] > div > div> [aria-label]`;
-      const closeCmtElement = await page.$(closeCmt);
+    //   await page.keyboard.press("Enter");
+    //   await delay(9000);
+    // //đóng cmt
+    // const closeCmt = `div[aria-labelledby][role="dialog"] > div > [aria-hidden] > div> [aria-hidden] > div > div> [aria-label]`;
+    // const closeCmtElement = await page.$(closeCmt);
 
-      if (closeCmtElement) {
-        await page.waitForSelector(closeCmt);
-        await delay(2000);
-        const closeCmts = await page.$(closeCmt);
-        closeCmts.click();
-        console.log("Đã click vào x");
-      }
-      await delay(5000);
+    // if (closeCmtElement) {
+    //   await page.waitForSelector(closeCmt);
+    //   await delay(2000);
+    //   const closeCmts = await page.$(closeCmt);
+    //   closeCmts.click();
+    //   console.log("Đã click vào x");
+    // }
+    // await delay(5000);
 
-      //vừa lướt vừa like
-      const childLike = await page.$$(lableChild);
-      if (childLike.length > 1) {
-        await scrollPageToBottom(page, scrollOptions);
-        await delay(3000);
-        await clickAndProcess(childLike[12]);
-        console.log("Liked");
-        await scrollPageToBottom(page, scrollOptions);
-        await scrollPageToTop(page, scrollOptions);
-        await delay(3000);
-      } else {
-        console.log("Không tìm thấy đủ số phần tử con từ lableChild");
-      }
-    } else {
-      console.log("Không tìm thấy đủ số phần tử con từ lableChild");
-    }
+    //   //vừa lướt vừa like
+    //   const childLike = await page.$$(lableChild);
+    //   if (childLike.length > 1) {
+    //     await scrollPageToBottom(page, scrollOptions);
+    //     await delay(3000);
+    //     await clickAndProcess(childLike[12]);
+    //     console.log("Liked");
+    //     await scrollPageToBottom(page, scrollOptions);
+    //     await scrollPageToTop(page, scrollOptions);
+    //     await delay(3000);
+    //   } else {
+    //     console.log("Không tìm thấy đủ số phần tử con từ lableChild");
+    //   }
+    // } else {
+    //   console.log("Không tìm thấy đủ số phần tử con từ lableChild");
+    // }
 
     //like - cmt
     async function clickAndProcess(childElement) {

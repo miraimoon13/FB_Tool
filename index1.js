@@ -331,6 +331,28 @@ async function watchVideo(page) {
     console.log(e);
   }
 }
+//xem thông báo chi tiết
+async function viewNotiDetail(page) {
+  await page.evaluate(() => {
+    window.scroll(0, 0);
+  });
+  const eleNoti =
+    'div[data-mcomponent="MContainer"] > div[role="button"] div[data-mcomponent="ServerTextArea"][data-type="text"] .fl.ac.am .native-text';
+  await page.waitForSelector(eleNoti);
+  await simTouch2(page, eleNoti, 5);
+  await page.waitForTimeout(2000);
+
+  const eleNoti1 = `div[data-mcomponent="MContainer"][data-type="vscroller"] > [aria-label]`; // in ra các phần tử thông báo
+  await page.waitForSelector(eleNoti1);
+  await simTouch2(page, eleNoti1, 5);
+  await delay(1000);
+  await page.waitForTimeout(6000);
+
+  await page.goBack();
+  console.log("đã back1");
+  await page.goBack();
+  console.log("đã back2");
+}
 //đăng nhâp
 const login = async (page, email, password) => {
   await page.goto("https://m.facebook.com/");
@@ -341,14 +363,26 @@ const login = async (page, email, password) => {
   await page.keyboard.press("Enter");
 
   await delay(9000);
-  if (false) {
-    await page.click(`form[method][action] > ._2pis > button[type]`);
-  } else {
-    await page.goto("https://m.facebook.com/");
+  const btnSaveInfo = `form[method][action] > ._2pis > button[type]`;
+  const btnSaveInfos = await page.$(btnSaveInfo);
+
+  if (btnSaveInfos) {
+    const btnSaveInfos = await page.$(btnSaveInfo);
+    await page.waitForSelector(btnSaveInfos);
+    await page.click(btnSaveInfos);
   }
 
   console.log("Đăng nhập thành công");
   return true;
+};
+// Hàm kiểm tra trang đã đăng nhập
+const isLogged = async (page) => {
+  try {
+    await page.waitForSelector('[name="login"]', { timeout: 5000 }); // Wait for login button to be visible
+    return false; // Chưa đăng nhập
+  } catch (error) {
+    return true; // Đã đăng nhập
+  }
 };
 (async () => {
   let br = null;
@@ -375,19 +409,18 @@ const login = async (page, email, password) => {
     assert(browser);
     br = browser;
     const page = await browser.newPage();
-    if (false) {
-      const loginSuccess = await login(
-        page,
-        "vunguyet13122k1@gmail.com",
-        "glucozo2k1@"
-      );
-      if (!loginSuccess) {
-        console.log("Đăng nhập thất bại");
-        await browser.close();
-        return;
-      }
-    } else {
-      await page.goto("https://m.facebook.com/");
+    // Mở trang web
+    await page.goto("https://m.facebook.com/");
+    await page.waitForTimeout(5000);
+    // Kiểm tra trang đã đăng nhập
+    const isAlreadyLogged = await isLogged(page);
+    console.log("Kiểm tra trang đăng nhập");
+    // Nếu chưa đăng nhập thì gọi hàm login
+    if (!isAlreadyLogged) {
+      console.log("Trang chưa đn");
+      await delay(2000);
+      await login(page, "gmail", "pass@");
+      console.log("đã đn thành công");
     }
 
     //like random
@@ -399,12 +432,12 @@ const login = async (page, email, password) => {
     await delay(2000);
     await viewStr(page);
     await delay(2000);
-    //CMT
-    await delay(3000);
-    await commentRandom(page);
-    await delay(5000);
-    await page.goBack();
-    await delay(5000);
+    // //CMT
+    // await delay(3000);
+    // await commentRandom(page);
+    // await delay(5000);
+    // await page.goBack();
+    // await delay(5000);
     // xem video
     await watchVideo(page);
     await delay(2000);
@@ -422,25 +455,7 @@ const login = async (page, email, password) => {
     await delay(5000);
 
     //xem thông báo chi tiết
-    await page.evaluate(() => {
-      window.scroll(0, 0);
-    });
-    const eleNoti =
-      'div[data-mcomponent="MContainer"] > div[role="button"] div[data-mcomponent="ServerTextArea"][data-type="text"] .fl.ac.am .native-text';
-    await page.waitForSelector(eleNoti);
-    await simTouch2(page, eleNoti, 5);
-    await page.waitForTimeout(2000);
-
-    const eleNoti1 = `div[data-mcomponent="MContainer"][data-type="vscroller"] > [aria-label]`; // in ra các phần tử thông báo
-    await page.waitForSelector(eleNoti1);
-    await simTouch2(page, eleNoti1, 5);
-    await delay(1000);
-    await page.waitForTimeout(6000);
-
-    await page.goBack();
-    console.log("đã back1");
-    await page.goBack();
-    console.log("đã back2");
+    await viewNotiDetail(page);
     await delay(5000);
   } catch (err) {
     console.error("=", err);
