@@ -5,6 +5,7 @@ const {
   scrollPageToBottom,
 } = require("puppeteer-autoscroll-down");
 const Hidemyacc = require("./hidemyacc");
+const { get } = require("http");
 const hidemyacc = new Hidemyacc();
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const goto = async (
@@ -166,38 +167,14 @@ async function viewStr(page) {
     const randomIndex = Math.floor(Math.random() * elmSTR.length);
     console.log("random ngẫu nhiên", randomIndex);
     elmSTR[randomIndex].click(); //click TD
-    await page.waitForTimeout(9000); //td
+    await page.waitForTimeout(22000); //td
     //tắt str
     const nextStrs = await page.$$(nextStr);
     console.log("đang đợi....");
     nextStrs[2].click();
-
-    // mobile
-    // const touchResult = await simTouch2(page, sltStr, randomIndex);
-    // console.log("11111");
-    // if (touchResult) {
-    //   console.log("bounding box:", touchResult);
-    //   await delay(2000);
-    //   await page.evaluate((touchResult) => {
-    //     window.scrollTo({
-    //       left: touchResult.x,
-    //       behavior: "auto",
-    //       duration: 5000,
-    //     });
-    //   }, touchResult);
-    await delay(2000);
-    // console.log("2222");
-    // await simTouch2(page, sltStr, randomIndex);
-    console.log("333 viewed story");
-    // }
-
-    // console.log("444 clicked xem str");
-    // await page.waitForTimeout(9000);
-    // await delay(3000);
-    // console.log("55 đang đợi để tắt str...");
-    // await simTouch2(page, nextStr, 2);
+    await delay(1000);
     console.log("66 đã click X");
-    await page.waitForTimeout(2000);
+    await page.waitForTimeout(1000);
   } catch (e) {
     console.log(e);
   }
@@ -378,10 +355,24 @@ const login = async (page, email, password) => {
 // Hàm kiểm tra trang đã đăng nhập
 const isLogged = async (page) => {
   try {
-    await page.waitForSelector('[name="login"]', { timeout: 5000 }); // Wait for login button to be visible
-    return false; // Chưa đăng nhập
-  } catch (error) {
-    return true; // Đã đăng nhập
+    // Lấy danh sách các cookie
+    const cookies = await page.cookies();
+    console.log("Danh sách các cookie:");
+
+    // Kiểm tra từng cookie
+    for (const cookie of cookies) {
+      console.log(`${cookie.name}: ${cookie.value}`);
+      if (cookie.name === "c_user") {
+        console.log("Đã đăng nhập");
+        return true;
+      }
+    }
+
+    console.log("Chưa đăng nhập");
+    return false;
+  } catch (e) {
+    console.error("Đã xảy ra lỗi:", e);
+    return false;
   }
 };
 (async () => {
@@ -414,30 +405,27 @@ const isLogged = async (page) => {
     await page.waitForTimeout(5000);
     // Kiểm tra trang đã đăng nhập
     const isAlreadyLogged = await isLogged(page);
-    console.log("Kiểm tra trang đăng nhập");
     // Nếu chưa đăng nhập thì gọi hàm login
     if (!isAlreadyLogged) {
-      console.log("Trang chưa đn");
       await delay(2000);
-      await login(page, "gmail", "pass@");
-      console.log("đã đn thành công");
+      await login(page, "111@gmail.com", "111@");
     }
 
     //like random
     await delay(1000);
     await reactLike1(page);
-    await delay(2000);
+    await delay(1000);
 
     // // xem str
-    await delay(2000);
+    await delay(1000);
     await viewStr(page);
+    await delay(1000);
+    //CMT
+    await delay(1000);
+    await commentRandom(page);
     await delay(2000);
-    // //CMT
-    // await delay(3000);
-    // await commentRandom(page);
-    // await delay(5000);
-    // await page.goBack();
-    // await delay(5000);
+    await page.goBack();
+    await delay(2000);
     // xem video
     await watchVideo(page);
     await delay(2000);
