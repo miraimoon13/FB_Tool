@@ -330,7 +330,7 @@ async function viewNotiDetail(page) {
   await page.goBack();
   console.log("đã back2");
 }
-//đăng nhâp
+//đăng nhập
 const login = async (page, email, password) => {
   await page.goto("https://m.facebook.com/");
   await page.waitForSelector('input[id="m_login_email"]');
@@ -340,18 +340,21 @@ const login = async (page, email, password) => {
   await page.keyboard.press("Enter");
 
   await delay(9000);
-  const btnSaveInfo = `form[method][action] > ._2pis > button[type]`;
+  const btnSaveInfo = `[type="submit"][value="OK"][data-sigil="touchable"]`;
   const btnSaveInfos = await page.$(btnSaveInfo);
+  console.log("111");
 
+  // Nếu tìm thấy selector "btnSaveInfo" thì thực hiện câu lệnh trong khối if
   if (btnSaveInfos) {
-    const btnSaveInfos = await page.$(btnSaveInfo);
-    await page.waitForSelector(btnSaveInfos);
-    await page.click(btnSaveInfos);
+    console.log("222");
+    await btnSaveInfos.click();
+    console.log("333");
   }
 
   console.log("Đăng nhập thành công");
   return true;
 };
+
 // Hàm kiểm tra trang đã đăng nhập
 const isLogged = async (page) => {
   try {
@@ -375,10 +378,11 @@ const isLogged = async (page) => {
     return false;
   }
 };
+
 (async () => {
   let br = null;
   try {
-    const profileId = "64abce9bb1cb505a203fe2b6";
+    const profileId = "64b50784b1cb505a206d8bc6";
     const proxy = {
       mode: "none",
       host: "",
@@ -408,7 +412,7 @@ const isLogged = async (page) => {
     // Nếu chưa đăng nhập thì gọi hàm login
     if (!isAlreadyLogged) {
       await delay(2000);
-      await login(page, "111@gmail.com", "111@");
+      await login(page, "1111111@gmail.com", "11111111@");
     }
 
     //like random

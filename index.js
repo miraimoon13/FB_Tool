@@ -91,7 +91,7 @@ async function watchVideo(page) {
     const playWatch = await page.$$(playButtonSelector);
     playWatch[0].click();
     console.log("Clicked playButton");
-    await page.waitForTimeout(20000);
+    await page.waitForTimeout(30000);
     console.log("Waiting for ... seconds");
     await delay(5000);
     //close X video
@@ -238,42 +238,41 @@ const isLogged = async (page) => {
 
       typeCmtE[0].click();
       console.log("đã click cmt");
-      await page.type(typeCm, " :>");
-      await page.waitForTimeout(2000);
+      await page.type(typeCm, ":>");
+      await delay(2000);
       console.log("đã nhập cmt");
 
       await page.keyboard.press("Enter");
+      console.log("đã gửi cmt");
       await delay(4000);
       //đóng cmt
       const closeCmt = `div[aria-labelledby][role="dialog"] > div > [aria-hidden] > div> [aria-hidden] > div > div> [aria-label]`;
       const closeCmtElement = await page.$(closeCmt);
 
       if (closeCmtElement) {
-        await page.waitForSelector(closeCmt);
+        // await page.waitForSelector(closeCmt);
         await delay(1000);
-        const closeCmts = await page.$(closeCmt);
-        closeCmts.click();
+        // const closeCmts = await page.$(closeCmt);
+        closeCmtElement.click();
         console.log("Đã click vào x");
       }
       await delay(2000);
-
-      //vừa lướt vừa like
-      const childLike = await page.$$(lableChild);
-      if (childLike.length > 1) {
-        await scrollPageToBottom(page, scrollOptions);
-        await delay(1000);
-        await clickAndProcess(childLike[12]);
-        console.log("Liked");
-        await scrollPageToBottom(page, scrollOptions);
-        await scrollPageToTop(page, scrollOptions);
-        await delay(1000);
-      } else {
-        console.log("Không tìm thấy đủ số phần tử con từ lableChild");
-      }
     } else {
       console.log("Không tìm thấy đủ số phần tử con từ lableChild");
     }
-
+    //vừa lướt vừa like
+    const childLike2 = await page.$$(lableChild);
+    if (childLike2.length > 1) {
+      await scrollPageToBottom(page, scrollOptions);
+      await delay(1000);
+      await clickAndProcess(childLike2[12]);
+      console.log("Liked");
+      await scrollPageToBottom(page, scrollOptions);
+      await scrollPageToTop(page, scrollOptions);
+      await delay(1000);
+    } else {
+      console.log("Không tìm thấy đủ số phần tử con từ lableChild");
+    }
     //like - cmt
     async function clickAndProcess(childElement) {
       await childElement.click();
@@ -285,7 +284,6 @@ const isLogged = async (page) => {
         childElement,
         'div[role="button"]'
       );
-
       const closestParentElement = await closestParent.asElement();
       if (closestParentElement) {
         await closestParentElement.click();
