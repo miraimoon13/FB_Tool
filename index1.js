@@ -21,7 +21,7 @@ const goto = async (
     return false;
   }
 };
-
+// m.facebook.com
 const waitForSelector = async (page, selector, options = { timeout: 6000 }) => {
   try {
     await page.waitForSelector(selector, options);
@@ -102,7 +102,7 @@ const simTouch2 = async (page, selector, index) => {
   }
 };
 
-//cmt-done
+//cmt
 async function commentRandom(page) {
   try {
     await page.evaluate(() => {
@@ -254,14 +254,14 @@ async function reactLike1(page) {
       'div[data-mcomponent="MContainer"][data-type="vscroller"] > div[data-mcomponent="MContainer"][data-type="container"] > div[data-long-click-action-id]';
     await page.waitForSelector(elmLikeSelector);
     const elmLike = await page.$$(elmLikeSelector);
-    const randomIndex = Math.floor(Math.random() * Math.min(elmLike.length, 3)); // Random trong khoảng 6 phần tử đầu tiên của elmLike
+    const randomIndex = Math.floor(Math.random() * Math.min(elmLike.length, 3)); // Random trong khoảng 4 phần tử đầu tiên của elmLike
     console.log("Random like: ", randomIndex);
 
     await page.waitForTimeout(2000);
     console.log("đợi..");
     // Lấy vị trí của phần tử
     const boundingBox = await elmLike[randomIndex].boundingBox();
-    await positionScroll(page, 0, boundingBox.y);
+    await positionScroll(page, 0, boundingBox.y); //cuộn đến vị trí phần tử vừa lấy
     await page.waitForTimeout(1000);
 
     await simTouch2(page, elmLikeSelector, randomIndex);
@@ -272,7 +272,7 @@ async function reactLike1(page) {
   }
 }
 
-//xem video -done
+//xem video
 async function watchVideo(page) {
   try {
     await page.evaluate(() => {
@@ -379,10 +379,10 @@ const isLogged = async (page) => {
   }
 };
 
-(async () => {
+!(async () => {
   let br = null;
   try {
-    const profileId = "64b50784b1cb505a206d8bc6";
+    const profileId = "64abce9bb1cb505a203fe2b6";
     const proxy = {
       mode: "none",
       host: "",
@@ -412,7 +412,7 @@ const isLogged = async (page) => {
     // Nếu chưa đăng nhập thì gọi hàm login
     if (!isAlreadyLogged) {
       await delay(2000);
-      await login(page, "1111111@gmail.com", "11111111@");
+      await login(page, "emai", "passs@");
     }
 
     //like random

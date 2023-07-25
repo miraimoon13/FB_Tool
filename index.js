@@ -20,7 +20,7 @@ const goto = async (
     return false;
   }
 };
-
+//www.facebook.com
 const waitForSelector = async (page, selector, options = { timeout: 6000 }) => {
   try {
     await page.waitForSelector(selector, options);
@@ -196,7 +196,7 @@ const isLogged = async (page) => {
     // Nếu chưa đăng nhập thì gọi hàm login
     if (!isAlreadyLogged) {
       await delay(2000);
-      await login(page, "111111@gmail.com", "1111111111@");
+      await login(page, "emailll", "password@");
     }
 
     // xem video
@@ -243,6 +243,8 @@ const isLogged = async (page) => {
       console.log("đã nhập cmt");
 
       await page.keyboard.press("Enter");
+      await delay(2000);
+
       console.log("đã gửi cmt");
       await delay(4000);
       //đóng cmt
